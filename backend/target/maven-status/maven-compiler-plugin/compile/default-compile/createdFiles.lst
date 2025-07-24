@@ -1,0 +1,6 @@
+com\livroponto\controller\PontoController.class
+com\livroponto\repository\RegistroPontoRepository.class
+com\livroponto\LivroPontoApplication.class
+com\livroponto\model\RegistroPonto.class
+com\livroponto\repository\FuncionarioRepository.class
+com\livroponto\model\Funcionario.class
