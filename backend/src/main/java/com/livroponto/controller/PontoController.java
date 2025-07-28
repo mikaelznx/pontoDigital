@@ -4,6 +4,7 @@ import com.livroponto.model.Funcionario;
 import com.livroponto.model.RegistroPonto;
 import com.livroponto.repository.FuncionarioRepository;
 import com.livroponto.repository.RegistroPontoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -11,28 +12,46 @@ import java.time.LocalTime;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/ponto")
+@CrossOrigin(origins = "*")
 public class PontoController {
-    private final FuncionarioRepository funcionarioRepo;
-    private final RegistroPontoRepository pontoRepo;
 
-    public PontoController(FuncionarioRepository funcionarioRepo, RegistroPontoRepository pontoRepo) {
-        this.funcionarioRepo = funcionarioRepo;
-        this.pontoRepo = pontoRepo;
-    }
+    @Autowired
+    private RegistroPontoRepository pontoRepository;
 
-    @PostMapping("/registrar-ponto")
-    public String registrar(@RequestBody String matricula) {
-        Optional<Funcionario> opt = funcionarioRepo.findByMatricula(matricula.trim());
-        if (opt.isEmpty()) return "Funcionário não encontrado";
+    @Autowired
+    private FuncionarioRepository funcionarioRepository;
+
+    @PostMapping
+    public String registrarPonto(@RequestBody RegistroRequest request) {
+        Optional<Funcionario> funcionarioOpt = funcionarioRepository.findByMatricula(request.getMatricula());
+        if (funcionarioOpt.isEmpty()) {
+            return "Funcionário com matrícula não encontrado.";
+        }
+
+        Funcionario funcionario = funcionarioOpt.get();
 
         RegistroPonto ponto = new RegistroPonto();
-        ponto.setFuncionario(opt.get());
+        ponto.setFuncionario(funcionario);
+        //ponto.setNome(funcionario.getNome());
         ponto.setData(LocalDate.now());
         ponto.setHora(LocalTime.now());
-        ponto.setTipo("ENTRADA"); // Simples: sempre entrada no MVP
+        ponto.setTipo("entrada");
 
-        pontoRepo.save(ponto);
-        return "Ponto registrado com sucesso";
+        pontoRepository.save(ponto);
+
+        return "Ponto registrado com sucesso para " + funcionario.getNome();
+    }
+
+    public static class RegistroRequest {
+        private String matricula;
+
+        public String getMatricula() {
+            return matricula;
+        }
+
+        public void setMatricula(String matricula) {
+            this.matricula = matricula;
+        }
     }
 }
