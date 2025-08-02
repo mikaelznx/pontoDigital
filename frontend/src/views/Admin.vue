@@ -14,6 +14,28 @@
           <label>Matrícula:</label>
           <input v-model="novoFuncionario.matricula" type="text" required />
         </div>
+        <div class="form-group">
+          <label>Carga Horária (horas/dia):</label>
+          <select v-model="novoFuncionario.cargaHoraria" required class="select-carga">
+            <option value="">Selecione a carga horária</option>
+            <option value="4">4 horas</option>
+            <option value="6">6 horas</option>
+            <option value="8">8 horas</option>
+            <option value="custom">Personalizada</option>
+          </select>
+        </div>
+        <div v-if="novoFuncionario.cargaHoraria === 'custom'" class="form-group">
+          <label>Horas Personalizadas:</label>
+          <input
+              v-model.number="novoFuncionario.cargaHorariaCustom"
+              type="number"
+              min="1"
+              max="12"
+              step="0.5"
+              placeholder="Ex: 7.5"
+              required
+          />
+        </div>
         <button type="submit" class="btn-primary">Cadastrar</button>
       </form>
       <p v-if="mensagemErro" class="erro">{{ mensagemErro }}</p>
@@ -26,7 +48,7 @@
         <select v-model="funcionarioSelecionadoId" @change="carregarPontos" class="select-func">
           <option disabled value="">Selecione um funcionário</option>
           <option v-for="f in funcionarios" :key="f.id" :value="f.id">
-            {{ f.nome }} ({{ f.matricula }})
+            {{ f.nome }} ({{ f.matricula }}) - {{ f.cargaHoraria }}h/dia
           </option>
         </select>
 
@@ -107,7 +129,9 @@ const meses = [
 ];
 const novoFuncionario = reactive({
   nome: "",
-  matricula: ""
+  matricula: "",
+  cargaHoraria: "",
+  cargaHorariaCustom: null
 });
 const mensagemErro = ref("");
 const horariosEditaveis = reactive({});
@@ -134,18 +158,36 @@ async function carregarFuncionarios() {
 
 async function cadastrarFuncionario() {
   mensagemErro.value = "";
-  if (!novoFuncionario.nome.trim() || !novoFuncionario.matricula.trim()) {
-    mensagemErro.value = "Nome e matrícula são obrigatórios.";
+
+  if (!novoFuncionario.nome.trim() || !novoFuncionario.matricula.trim() || !novoFuncionario.cargaHoraria) {
+    mensagemErro.value = "Nome, matrícula e carga horária são obrigatórios.";
     return;
   }
+
+  if (novoFuncionario.cargaHoraria === 'custom' && !novoFuncionario.cargaHorariaCustom) {
+    mensagemErro.value = "Informe a carga horária personalizada.";
+    return;
+  }
+
+  const cargaHorariaFinal = novoFuncionario.cargaHoraria === 'custom'
+      ? novoFuncionario.cargaHorariaCustom
+      : parseInt(novoFuncionario.cargaHoraria);
+
   try {
     const res = await api.post("/admin/funcionarios", {
       nome: novoFuncionario.nome,
       matricula: novoFuncionario.matricula,
+      cargaHoraria: cargaHorariaFinal
     });
+
     funcionarios.value.push(res.data);
+
+    // Limpar formulário
     novoFuncionario.nome = "";
     novoFuncionario.matricula = "";
+    novoFuncionario.cargaHoraria = "";
+    novoFuncionario.cargaHorariaCustom = null;
+
     alert("Funcionário cadastrado com sucesso!");
   } catch (error) {
     mensagemErro.value =
@@ -296,9 +338,11 @@ label {
 }
 
 input[type="text"],
+input[type="number"],
 input[type="time"],
 input[type="date"],
-select {
+select,
+.select-carga {
   padding: 0.6rem 0.8rem;
   font-size: 1rem;
   border-radius: 6px;
@@ -307,9 +351,11 @@ select {
 }
 
 input[type="text"]:focus,
+input[type="number"]:focus,
 input[type="time"]:focus,
 input[type="date"]:focus,
-select:focus {
+select:focus,
+.select-carga:focus {
   outline: none;
   border-color: #0077cc;
   box-shadow: 0 0 6px #66aaff88;
