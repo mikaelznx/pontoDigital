@@ -1,42 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
-              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
               name="RelatorioPonto"
               pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
-              uuid="simple-relatorio">
+              uuid="550e8400-e29b-41d4-a716-446655440000">
+
+    <!-- Parâmetros -->
+    <parameter name="nomeFuncionario" class="java.lang.String"/>
+    <parameter name="mesReferencia" class="java.lang.String"/>
+    <parameter name="logoPath" class="java.lang.String"/>
+    <parameter name="logo2Path" class="java.lang.String"/>
 
     <!-- Campos -->
     <field name="data" class="java.time.LocalDate"/>
     <field name="hora" class="java.time.LocalTime"/>
     <field name="tipo" class="java.lang.String"/>
 
-    <!-- Parâmetros -->
-    <parameter name="nomeFuncionario" class="java.lang.String"/>
-    <parameter name="mesReferencia" class="java.lang.String"/>
-
     <!-- Título -->
     <title>
-        <band height="80">
+        <band height="100">
+            <!-- Logo esquerda -->
+            <image>
+                <reportElement x="0" y="0" width="60" height="60"/>
+                <imageExpression><![CDATA[new java.io.File($P{logoPath}).exists() ? $P{logoPath} : null]]></imageExpression>
+            </image>
+
+            <!-- Logo direita -->
+            <image>
+                <reportElement x="495" y="0" width="60" height="60"/>
+                <imageExpression><![CDATA[new java.io.File($P{logo2Path}).exists() ? $P{logo2Path} : null]]></imageExpression>
+            </image>
+
+            <!-- Título centralizado -->
             <staticText>
-                <reportElement x="0" y="0" width="555" height="20"/>
+                <reportElement x="60" y="20" width="435" height="20"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="14" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Relatório de Ponto Mensal]]></text>
             </staticText>
 
+            <!-- Nome do funcionário -->
             <textField>
-                <reportElement x="0" y="30" width="555" height="20"/>
+                <reportElement x="0" y="50" width="555" height="20"/>
                 <textElement textAlignment="Center">
                     <font size="12"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Funcionário: " + $P{nomeFuncionario}]]></textFieldExpression>
             </textField>
 
+            <!-- Mês de referência -->
             <textField>
-                <reportElement x="0" y="50" width="555" height="20"/>
+                <reportElement x="0" y="70" width="555" height="20"/>
                 <textElement textAlignment="Center">
                     <font size="12"/>
                 </textElement>
@@ -69,16 +85,21 @@
     <!-- Corpo da Tabela -->
     <detail>
         <band height="20">
-            <textField>
+            <!-- Data formatada em pt-BR -->
+            <textField pattern="dd/MM/yyyy">
                 <reportElement x="0" y="0" width="185" height="20"/>
                 <textElement textAlignment="Center"/>
-                <textFieldExpression><![CDATA[$F{data}.toString()]]></textFieldExpression>
+                <textFieldExpression><![CDATA[ java.sql.Date.valueOf($F{data}) ]]></textFieldExpression>
             </textField>
-            <textField>
+
+            <!-- Hora formatada como HH:mm -->
+            <textField pattern="HH:mm">
                 <reportElement x="185" y="0" width="185" height="20"/>
                 <textElement textAlignment="Center"/>
-                <textFieldExpression><![CDATA[$F{hora}.toString()]]></textFieldExpression>
+                <textFieldExpression><![CDATA[ java.sql.Time.valueOf($F{hora}) ]]></textFieldExpression>
             </textField>
+
+            <!-- Tipo -->
             <textField>
                 <reportElement x="370" y="0" width="185" height="20"/>
                 <textElement textAlignment="Center"/>

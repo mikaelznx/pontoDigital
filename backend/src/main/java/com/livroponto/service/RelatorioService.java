@@ -9,6 +9,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -39,8 +40,14 @@ public class RelatorioService {
 
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("nomeFuncionario", funcionario.getNome());
-        parametros.put("matricula", funcionario.getMatricula());
-        parametros.put("mesAno", formatarMes(mes) + "/" + ano);
+        parametros.put("mesReferencia", formatarMes(mes) + "/" + ano);
+
+        // Caminho absoluto das imagens
+        String caminhoLogo1 = new File("C:\\ponto-digital\\backend\\src\\main\\resources\\relatorios\\logo.png").getAbsolutePath();
+        String caminhoLogo2 = new File("C:\\ponto-digital\\backend\\src\\main\\resources\\relatorios\\logo2.png").getAbsolutePath();
+
+        parametros.put("logoPath", caminhoLogo1);
+        parametros.put("logo2Path", caminhoLogo2);
 
         InputStream reportStream = new ClassPathResource("relatorios/relatorio_ponto.jrxml").getInputStream();
         JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
