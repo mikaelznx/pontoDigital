@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/admin/funcionarios")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173") // altere para seu front end
 public class FuncionarioController {
 
     @Autowired
     private FuncionarioRepository funcionarioRepository;
 
-    // Você pode manter vazio ou comentar métodos que causam conflito
+
 }

@@ -65,7 +65,7 @@ public class RegistroPonto {
         this.funcionario = funcionario;
     }
 
-    // ✅ Getter e Setter para nome
+    //  Getter e Setter para nome
     public String getNome() {
         return nome;
     }

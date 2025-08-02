@@ -18,8 +18,8 @@ public class AdminUserCreator implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        String username = "admin";
-        String senha = "admin123";
+        String username = "seuUser"; // crie um usuario
+        String senha = "suaSenha"; //crie um usuario
 
         if (userRepository.findByUsername(username).isEmpty()) {
             User admin = new User();
@@ -27,7 +27,7 @@ public class AdminUserCreator implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode(senha));
             admin.setRoles("ROLE_ADMIN");
             userRepository.save(admin);
-            System.out.println("✅ Usuário administrador criado: login = admin | senha = admin123");
+            System.out.println("✅ Usuário administrador criado");
         } else {
             System.out.println("ℹ️ Usuário administrador já existe.");
         }

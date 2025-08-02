@@ -20,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173") // altere para seu frontend
 public class AdminController {
 
     @Autowired
@@ -120,7 +120,7 @@ public class AdminController {
         public void setData(String data) { this.data = data; }
     }
 
-    // Manter compatibilidade com código antigo
+
     public static class AtualizaHoraRequest {
         private String hora;
 

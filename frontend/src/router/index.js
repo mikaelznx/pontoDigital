@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '../views/HomePage.vue'          // página inicial com os botões
+import HomePage from '../views/HomePage.vue'          //
 import RegistrarPonto from '../views/RegistrarPonto.vue'
 import Login from '../views/Login.vue'
 import Admin from '../views/Admin.vue'

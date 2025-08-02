@@ -9,14 +9,14 @@ import java.util.List;
 
 public interface RegistroPontoRepository extends JpaRepository<RegistroPonto, Long> {
 
-    // ✅ Para AdminController
+    //  Para AdminController
     List<RegistroPonto> findByFuncionarioAndDataBetween(
             Funcionario funcionario,
             LocalDate dataInicio,
             LocalDate dataFim
     );
 
-    // ✅ Para RelatorioController e RelatorioService
+    //  Para RelatorioController e RelatorioService
     List<RegistroPonto> findByFuncionarioIdAndDataBetweenOrderByDataAscHoraAsc(
             Long funcionarioId,
             LocalDate dataInicio,

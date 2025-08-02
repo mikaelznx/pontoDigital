@@ -48,9 +48,9 @@ public class RelatorioService {
         parametros.put("nomeFuncionario", funcionario.getNome());
         parametros.put("mesReferencia", formatarMes(mes) + "/" + ano);
 
-        // Caminho absoluto das imagens
-        String caminhoLogo1 = new File("C:\\ponto-digital\\backend\\src\\main\\resources\\relatorios\\logo.png").getAbsolutePath();
-        String caminhoLogo2 = new File("C:\\ponto-digital\\backend\\src\\main\\resources\\relatorios\\logo2.png").getAbsolutePath();
+        // Caminho das imagens - Mostre o caminho onde estao as imagens - altere se necessario
+        String caminhoLogo1 = new File("C:\\pontodigital\\backend\\src\\main\\resources\\relatorios\\logo.png").getAbsolutePath();
+        String caminhoLogo2 = new File("C:\\pontodigital\\backend\\src\\main\\resources\\relatorios\\logo2.png").getAbsolutePath();
 
         parametros.put("logoPath", caminhoLogo1);
         parametros.put("logo2Path", caminhoLogo2);

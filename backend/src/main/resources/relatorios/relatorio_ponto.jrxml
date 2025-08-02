@@ -21,13 +21,13 @@
     <!-- Título -->
     <title>
         <band height="120">
-            <!-- Logo esquerda -->
+            <!-- Logo esquerda - Atencao: Substitua a imagem da logotipo da esquerda, mas mantenha o nome -->
             <image>
                 <reportElement x="0" y="0" width="60" height="60"/>
                 <imageExpression><![CDATA[new java.io.File($P{logoPath}).exists() ? $P{logoPath} : null]]></imageExpression>
             </image>
 
-            <!-- Logo direita -->
+            <!-- Logo direita   - Atencao: Substitua a imagem da logotipo da esquerda, mas mantenha o nome -->
             <image>
                 <reportElement x="495" y="0" width="60" height="60"/>
                 <imageExpression><![CDATA[new java.io.File($P{logo2Path}).exists() ? $P{logo2Path} : null]]></imageExpression>
@@ -237,13 +237,13 @@
                 <text><![CDATA[Assinatura do Responsável]]></text>
             </staticText>
 
-            <!-- Data de emissão -->
+            <!-- Data de emissão e nome da cidade, orgao, oq desejar -->
             <textField pattern="dd/MM/yyyy HH:mm">
                 <reportElement x="400" y="100" width="155" height="15"/>
                 <textElement textAlignment="Right">
                     <font size="8"/>
                 </textElement>
-                <textFieldExpression><![CDATA["Palmeira dos Índios-AL, 31 de Agosto 2025"]]></textFieldExpression>
+                <textFieldExpression><![CDATA["Coloque sua cidade, data de emissao, etc"]]></textFieldExpression>
             </textField>
         </band>
     </summary>
