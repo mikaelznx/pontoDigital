@@ -15,6 +15,7 @@ com\livroponto\model\User.class
 com\livroponto\controller\PontoController.class
 com\livroponto\repository\RegistroPontoRepository.class
 com\livroponto\security\JwtUtil.class
+com\livroponto\controller\AdminController$AtualizaHoraRequest.class
 com\livroponto\config\WebConfig$1.class
 com\livroponto\config\AdminUserCreator.class
 com\livroponto\service\RelatorioService.class

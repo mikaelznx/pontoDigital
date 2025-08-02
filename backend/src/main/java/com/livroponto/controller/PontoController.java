@@ -33,7 +33,7 @@ public class PontoController {
 
         RegistroPonto ponto = new RegistroPonto();
         ponto.setFuncionario(funcionario);
-        //ponto.setNome(funcionario.getNome());
+        ponto.setNome(funcionario.getNome()); // ← ESTA LINHA PRECISA ESTAR ATIVA
         ponto.setData(LocalDate.now());
         ponto.setHora(LocalTime.now());
         ponto.setTipo("entrada");

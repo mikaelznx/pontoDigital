@@ -27,9 +27,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()     // login e registro liberados
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")  // só admin pode acessar
-                        .anyRequest().permitAll()  // outras rotas liberadas
+                        .requestMatchers("/api/auth/**").permitAll()                    // login e registro liberados
+                        .requestMatchers("/api/admin/relatorios/**").authenticated()   // qualquer usuário autenticado pode acessar relatórios
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")             // só admin pode acessar o restante da área admin
+                        .anyRequest().permitAll()                                      // outras rotas liberadas
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

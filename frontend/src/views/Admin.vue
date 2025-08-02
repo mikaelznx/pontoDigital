@@ -19,7 +19,7 @@
       <p v-if="mensagemErro" class="erro">{{ mensagemErro }}</p>
     </section>
 
-    <!-- Listagem de funcionários para seleção -->
+    <!-- Listagem de funcionários -->
     <section class="card">
       <h2>Funcionários</h2>
       <select v-model="funcionarioSelecionadoId" @change="carregarPontos">
@@ -37,6 +37,13 @@
         </option>
       </select>
 
+      <!-- Botão de Exportar -->
+      <div v-if="funcionarioSelecionadoId && mesSelecionado">
+        <button @click="gerarRelatorioPDF" style="margin-top: 10px;">
+          Exportar para PDF
+        </button>
+      </div>
+
       <!-- Listagem de pontos -->
       <div v-if="pontos.length">
         <h3>Pontos registrados</h3>
@@ -52,11 +59,7 @@
           <tr v-for="p in pontos" :key="p.id">
             <td>{{ formataData(p.data) }}</td>
             <td>
-              <input
-                  type="time"
-                  v-model="horariosEditaveis[p.id]"
-                  @change="editarHorario(p)"
-              />
+              <input type="time" v-model="horariosEditaveis[p.id]" />
             </td>
             <td>
               <button @click="editarHorario(p)">Salvar</button>
@@ -73,49 +76,37 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, watch } from "vue";
-import axios from "axios";
+import { reactive, ref, onMounted } from "vue";
+import api from "../axios.js";  // axios configurado com interceptor para enviar token
 
+// Estados reativos
 const funcionarios = ref([]);
 const pontos = ref([]);
 const funcionarioSelecionadoId = ref("");
 const mesSelecionado = ref(new Date().getMonth() + 1);
-
 const meses = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
 ];
-
 const novoFuncionario = reactive({
   nome: "",
-  matricula: "",
+  matricula: ""
 });
-
 const mensagemErro = ref("");
-
 const horariosEditaveis = reactive({});
 
-// Função para carregar todos os funcionários
+// Carrega lista de funcionários do backend
 async function carregarFuncionarios() {
   try {
-    const res = await axios.get("http://localhost:8080/api/admin/funcionarios");
+    const res = await api.get("/admin/funcionarios");
     funcionarios.value = res.data;
   } catch (error) {
     console.error("Erro ao carregar funcionários:", error);
+    mensagemErro.value = "Erro ao carregar funcionários.";
   }
 }
 
-// Função para cadastrar funcionário
+// Cadastra novo funcionário
 async function cadastrarFuncionario() {
   mensagemErro.value = "";
   if (!novoFuncionario.nome.trim() || !novoFuncionario.matricula.trim()) {
@@ -123,59 +114,99 @@ async function cadastrarFuncionario() {
     return;
   }
   try {
-    const res = await axios.post("http://localhost:8080/api/admin/funcionarios", {
+    const res = await api.post("/admin/funcionarios", {
       nome: novoFuncionario.nome,
       matricula: novoFuncionario.matricula,
     });
     funcionarios.value.push(res.data);
     novoFuncionario.nome = "";
     novoFuncionario.matricula = "";
+    alert("Funcionário cadastrado com sucesso!");
   } catch (error) {
     mensagemErro.value =
         error.response?.data?.message || "Erro ao cadastrar funcionário.";
   }
 }
 
-// Função para carregar pontos do funcionário selecionado e mês selecionado
+// Carrega os pontos do funcionário e mês selecionados
 async function carregarPontos() {
   if (!funcionarioSelecionadoId.value || !mesSelecionado.value) {
     pontos.value = [];
     return;
   }
+
+  const anoAtual = new Date().getFullYear();
+  const mes = mesSelecionado.value;
+  const inicio = `${anoAtual}-${String(mes).padStart(2, "0")}-01`;
+  const ultimoDia = new Date(anoAtual, mes, 0).getDate();
+  const fim = `${anoAtual}-${String(mes).padStart(2, "0")}-${ultimoDia}`;
+
   try {
-    const res = await axios.get('http://localhost:8080/api/pontos?role=admin')
-    pontos.value = res.data
+    const res = await api.get("/admin/pontos", {
+      params: {
+        funcionarioId: funcionarioSelecionadoId.value,
+        inicio,
+        fim,
+      },
+    });
     pontos.value = res.data;
 
-    // Preencher os horários editáveis
     pontos.value.forEach((p) => {
-      horariosEditaveis[p.id] = p.hora ?? "08:00"; // default se null
+      horariosEditaveis[p.id] = p.hora ?? "08:00";
     });
   } catch (error) {
     console.error("Erro ao carregar pontos:", error);
+    mensagemErro.value = "Erro ao carregar pontos.";
   }
 }
 
-// Formata data ISO (ex: 2025-07-28) para dd/mm/yyyy
-function formataData(dataISO) {
-  const d = new Date(dataISO);
-  return d.toLocaleDateString("pt-BR");
-}
-
-// Função para editar horário (salva a alteração)
+// Edita horário de ponto
 async function editarHorario(ponto) {
   const novoHorario = horariosEditaveis[ponto.id];
   if (!novoHorario) return;
 
   try {
-    await axios.put(`http://localhost:8080/api/admin/pontos/${ponto.id}`, {
+    await api.put(`/admin/pontos/${ponto.id}`, {
       hora: novoHorario,
     });
-    // Atualiza localmente
     ponto.hora = novoHorario;
+    alert("Horário atualizado com sucesso!");
   } catch (error) {
-    alert("Erro ao atualizar horário");
+    console.error("Erro ao atualizar horário:", error);
+    alert("Erro ao atualizar horário.");
   }
+}
+
+// Gera relatório PDF — usa endpoint correto /admin/relatorios/mensal e responseType blob
+async function gerarRelatorioPDF() {
+  if (!funcionarioSelecionadoId.value || !mesSelecionado.value) return;
+
+  const anoAtual = new Date().getFullYear();
+  const mes = mesSelecionado.value;
+
+  try {
+    const response = await api.get('/admin/relatorios/mensal', {
+      params: {
+        funcionarioId: funcionarioSelecionadoId.value,
+        mes,
+        ano: anoAtual
+      },
+      responseType: 'blob' // importante para pegar arquivo PDF
+    });
+
+    const fileURL = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    window.open(fileURL, '_blank');
+
+  } catch (error) {
+    console.error("Erro ao gerar relatório PDF:", error);
+    alert("Erro ao gerar relatório PDF.");
+  }
+}
+
+function formataData(dataISO) {
+  if (!dataISO) return "";
+  const partes = dataISO.split("-");
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 onMounted(() => {
@@ -238,6 +269,7 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -260,5 +292,6 @@ td {
 .erro {
   color: red;
   margin-top: 0.5rem;
+  font-weight: bold;
 }
 </style>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="RelatorioPonto"
+              pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
+              uuid="simple-relatorio">
+
+    <!-- Campos -->
+    <field name="data" class="java.time.LocalDate"/>
+    <field name="hora" class="java.time.LocalTime"/>
+    <field name="tipo" class="java.lang.String"/>
+
+    <!-- Parâmetros -->
+    <parameter name="nomeFuncionario" class="java.lang.String"/>
+    <parameter name="mesReferencia" class="java.lang.String"/>
+
+    <!-- Título -->
+    <title>
+        <band height="80">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="20"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Relatório de Ponto Mensal]]></text>
+            </staticText>
+
+            <textField>
+                <reportElement x="0" y="30" width="555" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Funcionário: " + $P{nomeFuncionario}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="50" width="555" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Mês de referência: " + $P{mesReferencia}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <!-- Cabeçalho da Tabela -->
+    <columnHeader>
+        <band height="20">
+            <staticText>
+                <reportElement x="0" y="0" width="185" height="20" backcolor="#DDDDDD" mode="Opaque"/>
+                <textElement textAlignment="Center"/>
+                <text><![CDATA[Data]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="185" y="0" width="185" height="20" backcolor="#DDDDDD" mode="Opaque"/>
+                <textElement textAlignment="Center"/>
+                <text><![CDATA[Hora]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="370" y="0" width="185" height="20" backcolor="#DDDDDD" mode="Opaque"/>
+                <textElement textAlignment="Center"/>
+                <text><![CDATA[Tipo]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <!-- Corpo da Tabela -->
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="185" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{data}.toString()]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="185" y="0" width="185" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{hora}.toString()]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="370" y="0" width="185" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <!-- Rodapé com espaço para assinatura -->
+    <summary>
+        <band height="100">
+            <line>
+                <reportElement x="30" y="30" width="200" height="0"/>
+            </line>
+            <staticText>
+                <reportElement x="30" y="35" width="200" height="15"/>
+                <textElement textAlignment="Center"/>
+                <text><![CDATA[Assinatura do Funcionário]]></text>
+            </staticText>
+
+            <line>
+                <reportElement x="325" y="30" width="200" height="0"/>
+            </line>
+            <staticText>
+                <reportElement x="325" y="35" width="200" height="15"/>
+                <textElement textAlignment="Center"/>
+                <text><![CDATA[Assinatura do Responsável]]></text>
+            </staticText>
+        </band>
+    </summary>
+</jasperReport>

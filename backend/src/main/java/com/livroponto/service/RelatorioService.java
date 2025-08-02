@@ -4,7 +4,6 @@ import com.livroponto.model.Funcionario;
 import com.livroponto.model.RegistroPonto;
 import com.livroponto.repository.FuncionarioRepository;
 import com.livroponto.repository.RegistroPontoRepository;
-import jakarta.transaction.Transactional;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.core.io.ClassPathResource;
@@ -28,7 +27,6 @@ public class RelatorioService {
         this.funcionarioRepository = funcionarioRepository;
     }
 
-    @Transactional
     public JasperPrint gerarRelatorioMensal(Long funcionarioId, int mes, int ano) throws Exception {
         Funcionario funcionario = funcionarioRepository.findById(funcionarioId)
                 .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
@@ -36,16 +34,26 @@ public class RelatorioService {
         LocalDate inicio = LocalDate.of(ano, mes, 1);
         LocalDate fim = YearMonth.of(ano, mes).atEndOfMonth();
 
-        List<RegistroPonto> registros = pontoRepository.findByFuncionarioIdAndDataBetweenOrderByDataAscHoraAsc(funcionarioId, inicio, fim);
+        List<RegistroPonto> registros = pontoRepository
+                .findByFuncionarioIdAndDataBetweenOrderByDataAscHoraAsc(funcionarioId, inicio, fim);
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("NOME_FUNCIONARIO", funcionario.getNome());
-        params.put("MES", inicio.getMonth().toString() + " " + ano);
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("nomeFuncionario", funcionario.getNome());
+        parametros.put("matricula", funcionario.getMatricula());
+        parametros.put("mesAno", formatarMes(mes) + "/" + ano);
 
-        InputStream jrxml = new ClassPathResource("relatorios/relatorio_ponto.jrxml").getInputStream();
-        JasperReport report = JasperCompileManager.compileReport(jrxml);
+        InputStream reportStream = new ClassPathResource("relatorios/relatorio_ponto.jrxml").getInputStream();
+        JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(registros);
 
-        return JasperFillManager.fillReport(report, params, dataSource);
+        return JasperFillManager.fillReport(jasperReport, parametros, dataSource);
+    }
+
+    private String formatarMes(int mes) {
+        String[] nomes = {
+                "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+                "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        };
+        return nomes[mes - 1];
     }
 }

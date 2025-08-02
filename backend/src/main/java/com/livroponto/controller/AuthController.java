@@ -48,7 +48,8 @@ public class AuthController {
             );
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
-            String token = jwtUtil.generateToken(userDetails.getUsername());
+            // Passar UserDetails ao gerar o token, não apenas username
+            String token = jwtUtil.generateToken(userDetails);
 
             return ResponseEntity.ok(new JwtResponse(token));
         } catch (BadCredentialsException e) {

@@ -3,7 +3,7 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
               name="relatorio_ponto" pageWidth="595" pageHeight="842" columnWidth="555"
-              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="relatorio-ponto">
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b55a06b0-1c79-4a17-9ee7-abcde1234567">
 
     <parameter name="NOME_FUNCIONARIO" class="java.lang.String"/>
     <parameter name="MES" class="java.lang.String"/>
@@ -19,14 +19,14 @@
     <title>
         <band height="50">
             <textField>
-                <reportElement x="0" y="0" width="555" height="20" uuid="title-1"/>
+                <reportElement x="0" y="0" width="555" height="20" uuid="e1c0a490-bb7f-47f7-aee3-1ff5661c99e1"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="16" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Relatório de Ponto - " + $P{NOME_FUNCIONARIO}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="0" y="25" width="555" height="20" uuid="title-2"/>
+                <reportElement x="0" y="25" width="555" height="20" uuid="ac2c5fbd-2650-4908-ae5d-456bcb8d0d4d"/>
                 <textElement textAlignment="Center">
                     <font size="12"/>
                 </textElement>
@@ -37,17 +37,35 @@
 
     <columnHeader>
         <band height="20">
-            <staticText><reportElement x="0" y="0" width="180" height="20"/><text><![CDATA[Data]]></text></staticText>
-            <staticText><reportElement x="180" y="0" width="180" height="20"/><text><![CDATA[Hora]]></text></staticText>
-            <staticText><reportElement x="360" y="0" width="180" height="20"/><text><![CDATA[Tipo]]></text></staticText>
+            <staticText>
+                <reportElement x="0" y="0" width="180" height="20" uuid="dfec63e1-c10b-4ab3-8f1b-123456789abc"/>
+                <text><![CDATA[Data]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="180" y="0" width="180" height="20" uuid="b0fd2d50-e5f8-4b82-b74c-456def789abc"/>
+                <text><![CDATA[Hora]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="360" y="0" width="180" height="20" uuid="c1ed27e5-4e39-4b15-bc12-789def456abc"/>
+                <text><![CDATA[Tipo]]></text>
+            </staticText>
         </band>
     </columnHeader>
 
     <detail>
         <band height="20">
-            <textField><reportElement x="0" y="0" width="180" height="20"/><textFieldExpression><![CDATA[$F{data}.toString()]]></textFieldExpression></textField>
-            <textField><reportElement x="180" y="0" width="180" height="20"/><textFieldExpression><![CDATA[$F{hora}.toString()]]></textFieldExpression></textField>
-            <textField><reportElement x="360" y="0" width="180" height="20"/><textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression></textField>
+            <textField>
+                <reportElement x="0" y="0" width="180" height="20" uuid="1f6f13b3-3280-4660-aeb0-aabbccddeeff"/>
+                <textFieldExpression><![CDATA[$F{data}.toString()]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="180" y="0" width="180" height="20" uuid="1f6f13b3-1111-4660-aeb0-aabbccddeeff"/>
+                <textFieldExpression><![CDATA[$F{hora}.toString()]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="360" y="0" width="180" height="20" uuid="1f6f13b3-2222-4660-aeb0-aabbccddeeff"/>
+                <textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+            </textField>
         </band>
     </detail>
 </jasperReport>
