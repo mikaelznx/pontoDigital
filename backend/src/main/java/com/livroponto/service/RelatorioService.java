@@ -96,7 +96,7 @@ public class RelatorioService {
         int minutosBase = cargaHoraria.multiply(BigDecimal.valueOf(60)).intValue();
 
         // Adicionar variação aleatória de -15 a +30 minutos para parecer mais real
-        int variacaoMinutos = ThreadLocalRandom.current().nextInt(-15, 31);
+        int variacaoMinutos = ThreadLocalRandom.current().nextInt(-8, 9);
         int minutosTotal = minutosBase + variacaoMinutos;
 
         return horaEntrada.plusMinutes(minutosTotal);

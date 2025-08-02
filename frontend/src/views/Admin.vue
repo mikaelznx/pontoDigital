@@ -1,6 +1,11 @@
 <template>
-  <div class="container">
-    <h1>Gerenciar Funcionários e Pontos</h1>
+  <div :class="['container', isDarkMode ? 'dark' : 'light']">
+    <header class="header">
+      <h1>Gerenciar Funcionários e Pontos</h1>
+      <button @click="toggleDarkMode" class="toggle-btn">
+        {{ isDarkMode ? 'Modo Claro' : 'Modo Escuro' }}
+      </button>
+    </header>
 
     <!-- Formulário para cadastrar funcionário -->
     <section class="card">
@@ -146,6 +151,22 @@ const ultimoDiaMes = computed(() => {
   return `${anoAtual}-${mesStr}-${diaStr}`;
 });
 
+const isDarkMode = ref(false);
+
+// Tenta carregar a preferência do localStorage ao montar
+onMounted(() => {
+  carregarFuncionarios();
+  const saved = localStorage.getItem("darkMode");
+  if (saved === "true") isDarkMode.value = true;
+});
+
+function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value;
+  localStorage.setItem("darkMode", isDarkMode.value);
+}
+
+// --- resto do seu código (funções API, cadastrarFuncionario, carregarPontos, etc.) ---
+
 async function carregarFuncionarios() {
   try {
     const res = await api.get("/admin/funcionarios");
@@ -270,51 +291,190 @@ async function gerarRelatorioPDF() {
     alert("Erro ao gerar relatório PDF.");
   }
 }
-
-function formataData(dataISO) {
-  if (!dataISO) return "";
-  const partes = dataISO.split("-");
-  return `${partes[2]}/${partes[1]}/${partes[0]}`;
-}
-
-onMounted(() => {
-  carregarFuncionarios();
-});
 </script>
 
 <style scoped>
 .container {
   max-width: 900px;
-  margin: 2rem auto;
+  margin: 2.5rem auto;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  padding: 1rem 2rem;
+  padding: 2rem 3rem;
+  border-radius: 14px;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* DARK MODE */
+.container.dark {
+  background: #1f1f1f;
+  color: #e0e0e0;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.8);
+}
+
+.container.dark h1 {
+  color: #d0d0d0;
+}
+
+.container.dark h2 {
+  color: #aad4ff;
+  border-bottom: 3px solid #4cc9f0;
+}
+
+.container.dark .card {
+  background-color: #2a2a2a;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.9);
+}
+
+.container.dark .form-group label {
+  color: #c5d7ff;
+}
+
+.container.dark input,
+.container.dark select {
+  background: #1f1f1f;
+  border: 1.5px solid #444;
+  color: #e0e0e0;
+}
+
+.container.dark input:focus,
+.container.dark select:focus {
+  border-color: #4cc9f0;
+  box-shadow: 0 0 10px #4cc9f0aa;
+  background: #272727;
+}
+
+.container.dark table {
+  background: #2a2a2a;
+  color: #d0d0d0;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.7);
+}
+
+.container.dark thead tr {
+  background-color: #4cc9f0;
+  color: #222;
+  box-shadow: inset 0 -4px 6px rgb(0 0 0 / 0.3);
+}
+
+.container.dark tbody tr:hover {
+  background-color: #3a3f4a;
+}
+
+.container.dark .btn-primary {
+  background-color: #276fbf;
+  box-shadow: 0 0 6px #276fbfcc;
+}
+
+.container.dark .btn-primary:hover {
+  background-color: #1f548c;
+  box-shadow: 0 0 20px #4cc9f0;
+}
+
+.container.dark .btn-secondary {
+  background-color: #2d995b;
+  box-shadow: 0 0 6px #2d995bcc;
+}
+
+.container.dark .btn-secondary:hover {
+  background-color: #1f703f;
+  box-shadow: 0 0 15px #27ae60;
+}
+
+.container.dark .erro {
+  color: #ff6b6b;
+}
+
+/* LIGHT MODE */
+.container.light {
   background: #fff;
-  border-radius: 8px;
+  color: #222;
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
 }
 
+.container.light h1 {
+  color: #222;
+}
+
+.container.light h2 {
+  color: #444;
+  border-bottom: 2px solid #0077cc;
+}
+
+.container.light .card {
+  background-color: #f7f9fc;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
+}
+
+.container.light .form-group label {
+  color: #333;
+}
+
+.container.light input,
+.container.light select {
+  background: #fff;
+  border: 1.8px solid #ccc;
+  color: #222;
+}
+
+.container.light input:focus,
+.container.light select:focus {
+  border-color: #0077cc;
+  box-shadow: 0 0 6px #66aaff88;
+  background: #fff;
+}
+
+.container.light table {
+  background: white;
+  color: #222;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
+}
+
+.container.light thead tr {
+  background-color: #0077cc;
+  color: white;
+  box-shadow: inset 0 -4px 6px rgb(0 0 0 / 0.3);
+}
+
+.container.light tbody tr:hover {
+  background-color: #eef3f7;
+}
+
+.container.light .btn-primary {
+  background-color: #0077cc;
+}
+
+.container.light .btn-primary:hover {
+  background-color: #005fa3;
+}
+
+.container.light .btn-secondary {
+  background-color: #4caf50;
+}
+
+.container.light .btn-secondary:hover {
+  background-color: #3e8e41;
+}
+
+.container.light .erro {
+  color: #d93025;
+}
+
+/* GERAL */
 h1 {
   text-align: center;
   font-weight: 700;
   font-size: 2.2rem;
   margin-bottom: 2rem;
-  color: #222;
 }
 
 h2 {
   font-weight: 600;
   margin-bottom: 1rem;
-  color: #444;
-  border-bottom: 2px solid #0077cc;
   padding-bottom: 0.4rem;
 }
 
 .card {
-  background-color: #f7f9fc;
   padding: 1.8rem 2rem;
   margin-bottom: 2.5rem;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
 }
 
 .form-cadastro {
@@ -334,7 +494,6 @@ h2 {
 
 label {
   font-weight: 600;
-  color: #333;
 }
 
 input[type="text"],
@@ -343,143 +502,133 @@ input[type="time"],
 input[type="date"],
 select,
 .select-carga {
-  padding: 0.6rem 0.8rem;
+  padding: 0.65rem 0.9rem;
   font-size: 1rem;
-  border-radius: 6px;
-  border: 1.8px solid #ccc;
-  transition: border-color 0.25s ease;
+  border-radius: 8px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="time"]:focus,
-input[type="date"]:focus,
-select:focus,
-.select-carga:focus {
-  outline: none;
-  border-color: #0077cc;
-  box-shadow: 0 0 6px #66aaff88;
+input[type="text"],
+input[type="number"],
+input[type="time"],
+input[type="date"],
+select,
+.select-carga {
+  border-style: solid;
+  border-width: 1.5px;
 }
 
 .btn-primary {
-  background-color: #0077cc;
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 0.7rem 1.8rem;
-  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.85rem 2rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
   align-self: center;
-}
-
-.btn-primary:hover {
-  background-color: #005fa3;
+  width: 220px;
+  letter-spacing: 0.02em;
 }
 
 .btn-secondary {
-  background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 0.45rem 1.3rem;
-  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.55rem 1.5rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-secondary:hover {
-  background-color: #3e8e41;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  letter-spacing: 0.01em;
 }
 
 .filtros {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.8rem;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1.8rem;
   flex-wrap: wrap;
 }
 
 .select-func,
 .select-mes {
-  padding: 0.5rem 0.9rem;
+  padding: 0.65rem 1rem;
   font-size: 1rem;
-  border-radius: 6px;
-  border: 1.8px solid #ccc;
-  min-width: 230px;
-  transition: border-color 0.25s ease;
-}
-
-.select-func:focus,
-.select-mes:focus {
-  outline: none;
-  border-color: #0077cc;
-  box-shadow: 0 0 6px #66aaff88;
+  border-radius: 8px;
+  min-width: 240px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .label-mes {
   font-weight: 600;
-  color: #333;
-  margin-left: 10px;
+  margin-left: 12px;
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 .export-btn-container {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .tabela-pontos-container {
   overflow-x: auto;
+  border-radius: 14px;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 1rem;
-  background: white;
-  border-radius: 8px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
+}
+
+thead tr {
+  font-weight: 700;
+  letter-spacing: 0.03em;
 }
 
 th,
 td {
-  border: 1px solid #ddd;
-  padding: 0.75rem 1rem;
+  border-bottom: 1.5px solid;
+  padding: 1rem 1.2rem;
   text-align: center;
   vertical-align: middle;
 }
 
-th {
-  background-color: #0077cc;
-  color: white;
-  font-weight: 600;
+tbody tr:hover {
+  cursor: default;
 }
 
 input.input-date,
 input.input-time {
-  padding: 0.4rem 0.6rem;
-  border-radius: 5px;
-  border: 1.5px solid #ccc;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
   font-size: 1rem;
   width: 120px;
-  transition: border-color 0.25s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+}
+
+input.input-date,
+input.input-time {
+  border-style: solid;
+  border-width: 1.5px;
 }
 
 input.input-date:focus,
 input.input-time:focus {
   outline: none;
-  border-color: #0077cc;
-  box-shadow: 0 0 6px #66aaff88;
 }
 
 .erro {
-  color: #d93025;
-  margin-top: 0.75rem;
+  margin-top: 1rem;
   font-weight: 700;
   text-align: center;
   font-size: 1rem;
+  letter-spacing: 0.01em;
 }
 </style>
